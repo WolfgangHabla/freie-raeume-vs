@@ -1,0 +1,440 @@
+{
+  "rooms": [
+    {
+      "name": "B 003 Zuse Hörsaal",
+      "short_name": "B 003",
+      "building": "B",
+      "floor": 0,
+      "include": true
+    },
+    {
+      "name": "B 102 Hörsaal",
+      "short_name": "B 102",
+      "building": "B",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "B 103 Hörsaal",
+      "short_name": "B 103",
+      "building": "B",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "B 201 Hörsaal",
+      "short_name": "B 201",
+      "building": "B",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "B 202 Hörsaal",
+      "short_name": "B 202",
+      "building": "B",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "B 203 Hörsaal",
+      "short_name": "B 203",
+      "building": "B",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "B 301 Hörsaal",
+      "short_name": "B 301",
+      "building": "B",
+      "floor": 3,
+      "include": true
+    },
+    {
+      "name": "B 302 Hörsaal",
+      "short_name": "B 302",
+      "building": "B",
+      "floor": 3,
+      "include": true
+    },
+    {
+      "name": "B 303 Hörsaal",
+      "short_name": "B 303",
+      "building": "B",
+      "floor": 3,
+      "include": true
+    },
+    {
+      "name": "C -1.21 Schmalenbach Tiefenhörsaal",
+      "short_name": "C -1.21",
+      "building": "C",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "C -1.23 Gutenberg Tiefenhörsaal",
+      "short_name": "C -1.23",
+      "building": "C",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "C 1.20 Hörsaal",
+      "short_name": "C 1.20",
+      "building": "C",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "C 1.21 Hörsaal",
+      "short_name": "C 1.21",
+      "building": "C",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "C 1.22 Hörsaal",
+      "short_name": "C 1.22",
+      "building": "C",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "C 1.23 Cubes 1-4",
+      "short_name": "C 1.23",
+      "building": "C",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "C 1.24 Cubes 5-8",
+      "short_name": "C 1.24",
+      "building": "C",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "C 1.31 Lehr-/Lernraum",
+      "short_name": "C 1.31",
+      "building": "C",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "C 2.20 Hörsaal",
+      "short_name": "C 2.20",
+      "building": "C",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "C 2.21 Hörsaal",
+      "short_name": "C 2.21",
+      "building": "C",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "C 2.22 Hörsaal",
+      "short_name": "C 2.22",
+      "building": "C",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "C 2.23 Hörsaal",
+      "short_name": "C 2.23",
+      "building": "C",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "C 2.24 Hörsaal",
+      "short_name": "C 2.24",
+      "building": "C",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "C 2.25 Hörsaal",
+      "short_name": "C 2.25",
+      "building": "C",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "C 2.30 Hörsaal",
+      "short_name": "C 2.30",
+      "building": "C",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "C 3.20 Hörsaal",
+      "short_name": "C 3.20",
+      "building": "C",
+      "floor": 3,
+      "include": true
+    },
+    {
+      "name": "C 3.21 Hörsaal",
+      "short_name": "C 3.21",
+      "building": "C",
+      "floor": 3,
+      "include": true
+    },
+    {
+      "name": "C 3.22 Hörsaal",
+      "short_name": "C 3.22",
+      "building": "C",
+      "floor": 3,
+      "include": true
+    },
+    {
+      "name": "C 3.23 Hörsaal",
+      "short_name": "C 3.23",
+      "building": "C",
+      "floor": 3,
+      "include": true
+    },
+    {
+      "name": "C 3.24 Hörsaal",
+      "short_name": "C 3.24",
+      "building": "C",
+      "floor": 3,
+      "include": true
+    },
+    {
+      "name": "C 3.25 Hörsaal",
+      "short_name": "C 3.25",
+      "building": "C",
+      "floor": 3,
+      "include": true
+    },
+    {
+      "name": "D -109 Rose Hörsaal",
+      "short_name": "D -109",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 007 Hörsaal",
+      "short_name": "D 007",
+      "building": "D",
+      "floor": 0,
+      "include": true
+    },
+    {
+      "name": "D 008 Hörsaal",
+      "short_name": "D 008",
+      "building": "D",
+      "floor": 0,
+      "include": true
+    },
+    {
+      "name": "D 009 Hörsaal",
+      "short_name": "D 009",
+      "building": "D",
+      "floor": 0,
+      "include": true
+    },
+    {
+      "name": "D 010 Hörsaal",
+      "short_name": "D 010",
+      "building": "D",
+      "floor": 0,
+      "include": true
+    },
+    {
+      "name": "D 014 Hörsaal",
+      "short_name": "D 014",
+      "building": "D",
+      "floor": 0,
+      "include": true
+    },
+    {
+      "name": "D 015 Hörsaal",
+      "short_name": "D 015",
+      "building": "D",
+      "floor": 0,
+      "include": true
+    },
+    {
+      "name": "D 016 Hörsaal",
+      "short_name": "D 016",
+      "building": "D",
+      "floor": 0,
+      "include": true
+    },
+    {
+      "name": "D 034 Hörsaal",
+      "short_name": "D 034",
+      "building": "D",
+      "floor": 0,
+      "include": true
+    },
+    {
+      "name": "D 036 Hörsaal",
+      "short_name": "D 036",
+      "building": "D",
+      "floor": 0,
+      "include": true
+    },
+    {
+      "name": "D 107 Hörsaal",
+      "short_name": "D 107",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 108 Hörsaal",
+      "short_name": "D 108",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 109 Hörsaal",
+      "short_name": "D 109",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 110 Hörsaal",
+      "short_name": "D 110",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 114 Hörsaal",
+      "short_name": "D 114",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 115 Hörsaal",
+      "short_name": "D 115",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 116 Hörsaal",
+      "short_name": "D 116",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 133 Hörsaal",
+      "short_name": "D 133",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 134 Hörsaal",
+      "short_name": "D 134",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 136 Hörsaal",
+      "short_name": "D 136",
+      "building": "D",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "D 207 Hörsaal",
+      "short_name": "D 207",
+      "building": "D",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "D 208 Hörsaal",
+      "short_name": "D 208",
+      "building": "D",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "D 209 Hörsaal",
+      "short_name": "D 209",
+      "building": "D",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "D 210 Hörsaal",
+      "short_name": "D 210",
+      "building": "D",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "D 214 Hörsaal",
+      "short_name": "D 214",
+      "building": "D",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "D 215 Hörsaal",
+      "short_name": "D 215",
+      "building": "D",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "D 216 Hörsaal",
+      "short_name": "D 216",
+      "building": "D",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "D 233 Hörsaal",
+      "short_name": "D 233",
+      "building": "D",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "D 235 Hörsaal",
+      "short_name": "D 235",
+      "building": "D",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "D 236 Hörsaal",
+      "short_name": "D 236",
+      "building": "D",
+      "floor": 2,
+      "include": true
+    },
+    {
+      "name": "D 333 Konferenzraum",
+      "short_name": "D 333",
+      "building": "D",
+      "floor": 3,
+      "include": true
+    },
+    {
+      "name": "F 002 Meet & Work",
+      "short_name": "F 002",
+      "building": "F",
+      "floor": 0,
+      "include": true
+    }
+  ],
+  "last_collected": "2026-04-11",
+  "sources_weeks": 4
+}

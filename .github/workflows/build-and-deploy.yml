@@ -1,0 +1,68 @@
+name: Build & Deploy Freie Räume
+
+on:
+  schedule:
+    # Täglich 04:00 UTC = 06:00 CEST / 05:00 CET
+    # Liegt vor Vorlesungsbeginn, Rapla-Last ist niedrig
+    - cron: '0 4 * * *'
+  workflow_dispatch:  # Manuell aus Actions-Tab triggerbar
+  push:
+    branches: [main]
+    paths:
+      - 'app.py'
+      - 'generate_static.py'
+      - 'rooms.json'
+      - '.github/workflows/build-and-deploy.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compute current quarter (Europe/Berlin)
+        id: quarter
+        run: |
+          # Lokalzeit Europe/Berlin verwenden, nicht UTC — sonst springt
+          # das Quartal nachts um Mitternacht in der falschen Zeitzone
+          export TZ=Europe/Berlin
+          Y=$(date +%Y)
+          M=$(date +%-m)
+          Q=$(( (M - 1) / 3 + 1 ))
+          echo "value=${Y}-Q${Q}" >> "$GITHUB_OUTPUT"
+          echo "Generating quarter: ${Y}-Q${Q}"
+
+      - name: Generate static page
+        run: python generate_static.py --quarter ${{ steps.quarter.outputs.value }} --output docs/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
