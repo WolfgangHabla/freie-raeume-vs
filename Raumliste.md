@@ -1,10 +1,11 @@
 # DHBW-VS Raumliste
 
-Automatisch erzeugt von `collect_rooms.py` am 2026-04-11.
-Quelle: 62 Räume aus Rapla.
+Automatisch erzeugt von `collect_rooms.py` am 2026-05-05.
+Quelle: 64 Räume aus Rapla.
 
 ## Gebäude B
 
+- **B 002** — Leibniz Hörsaal
 - **B 003** — Zuse Hörsaal
 - **B 102** — Hörsaal
 - **B 103** — Hörsaal
@@ -50,6 +51,7 @@ Quelle: 62 Räume aus Rapla.
 - **D 015** — Hörsaal
 - **D 016** — Hörsaal
 - **D 034** — Hörsaal
+- **D 035** — Hörsaal
 - **D 036** — Hörsaal
 - **D 107** — Hörsaal
 - **D 108** — Hörsaal

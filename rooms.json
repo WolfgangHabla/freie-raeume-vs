@@ -1,6 +1,13 @@
 {
   "rooms": [
     {
+      "name": "B 002 Leibniz Hörsaal",
+      "short_name": "B 002",
+      "building": "B",
+      "floor": 0,
+      "include": true
+    },
+    {
       "name": "B 003 Zuse Hörsaal",
       "short_name": "B 003",
       "building": "B",
@@ -274,6 +281,13 @@
       "include": true
     },
     {
+      "name": "D 035 Hörsaal",
+      "short_name": "D 035",
+      "building": "D",
+      "floor": 0,
+      "include": true
+    },
+    {
       "name": "D 036 Hörsaal",
       "short_name": "D 036",
       "building": "D",
@@ -435,6 +449,6 @@
       "include": true
     }
   ],
-  "last_collected": "2026-04-11",
-  "sources_weeks": 4
+  "last_collected": "2026-05-05",
+  "sources_weeks": 12
 }
