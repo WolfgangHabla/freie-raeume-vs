@@ -2,9 +2,11 @@ name: Build & Deploy Freie Räume
 
 on:
   schedule:
-    # Täglich 04:00 UTC = 06:00 CEST / 05:00 CET
-    # Liegt vor Vorlesungsbeginn, Rapla-Last ist niedrig
-    - cron: '0 4 * * *'
+    # Alle 2h von 7-15 Uhr lokal (Europe/Berlin): 7,9,11,13,15 Uhr.
+    # Cron läuft in UTC, daher 5,7,9,11,13 UTC während CEST (Sommerzeit).
+    # Achtung: bei CET (Winterzeit, UTC+1) verschiebt sich das auf
+    # 6,8,10,12,14 Uhr lokal — Cron-Zeiten selbst bleiben fix in UTC.
+    - cron: '0 5,7,9,11,13 * * *'
   workflow_dispatch:  # Manuell aus Actions-Tab triggerbar
   push:
     branches: [main]
