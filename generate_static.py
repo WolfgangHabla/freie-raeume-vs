@@ -3,20 +3,31 @@
 Usage:
     python generate_static.py --quarter 2026-Q2 --output docs/index.html
     python generate_static.py --weeks 12 --start 2026-04-20 --output docs/index.html
+    python generate_static.py --refresh-week --output docs/index.html
 
 Das Skript iteriert alle Wochen eines Quartals, ruft für jede Woche die
 Rapla-Daten ab, berechnet die freien Zeitfenster pro Raum und Tag und erzeugt
 eine eigenständige HTML-Datei mit eingebettetem JSON. Keine Server-Abfragen
 im Browser nötig.
+
+`--refresh-week` ist ein Schnellmodus für häufige Updates (z.B. alle 15 Min):
+Er lädt den kompletten Datenbestand von der aktuell live deployten Seite
+(`--source-url`) statt vom halben Quartal, ersetzt darin nur die aktuelle
+Woche mit frisch von Rapla geholten Daten und schreibt das Ergebnis zurück.
+So kostet ein Schnell-Refresh nur 1 Rapla-Anfrage statt ~13.
 """
 
 import argparse
 import json
 import os
+import re
 import sys
 import time
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
+
+import requests
 
 from app import (
     _holidays_bw,
@@ -25,6 +36,11 @@ from app import (
 )
 
 ROOMS_JSON = Path(__file__).parent / "rooms.json"
+DEFAULT_SOURCE_URL = "https://wolfganghabla.github.io/freie-raeume-vs/"
+
+
+def now_berlin():
+    return datetime.now(ZoneInfo("Europe/Berlin"))
 
 QUARTER_MONTHS = {
     1: ("Januar\u2013M\u00e4rz", 1, 3),
@@ -422,7 +438,7 @@ def generate(weeks_iter, title, output_path):
 
     html = HTML_TEMPLATE.format(
         title=title,
-        generated=date.today().strftime("%d.%m.%Y"),
+        generated=now_berlin().strftime("%d.%m.%Y %H:%M"),
         data_json=json.dumps(all_weeks, ensure_ascii=False),
         rooms_json=json.dumps(rooms_meta, ensure_ascii=False),
     )
@@ -434,6 +450,90 @@ def generate(weeks_iter, title, output_path):
     print(f"\nFertig: {output_path} ({len(html)} Bytes)")
 
 
+def fetch_existing_data(url):
+    """Lädt die aktuell live deployte Seite und extrahiert Titel + Wochendaten.
+
+    Rückgabe: (title, all_weeks) oder None, falls die Seite nicht erreichbar
+    ist oder das erwartete Muster nicht gefunden wird (z.B. beim allerersten
+    Deploy, wenn noch keine Seite existiert).
+    """
+    try:
+        resp = requests.get(url, timeout=15)
+        resp.raise_for_status()
+    except Exception as e:
+        print(f"Warnung: konnte {url} nicht laden ({e})")
+        return None
+
+    html = resp.text
+    # Anker auf die nächste bekannte Zeile statt auf "];" — robuster, falls
+    # ein Raum-/Kursname zufällig diese Zeichenfolge enthält.
+    data_m = re.search(r"const DATA = (.*?);\s*const ROOMS_META", html, re.S)
+    title_m = re.search(r'<p class="subtitle">(.*?) — Übersicht', html, re.S)
+    if not data_m:
+        print(f"Warnung: konnte DATA nicht aus {url} extrahieren")
+        return None
+
+    all_weeks = json.loads(data_m.group(1))
+    title = title_m.group(1).strip() if title_m else "Freie Räume"
+    return title, all_weeks
+
+
+def current_quarter_title_and_weeks(today):
+    q = (today.month - 1) // 3 + 1
+    label, _, _ = QUARTER_MONTHS[q]
+    title = f"Q{q} {today.year} ({label})"
+    return title, mondays_in_quarter(today.year, q)
+
+
+def refresh_current_week(source_url, output_path):
+    """Schneller Refresh: nur die aktuelle Woche neu von Rapla holen.
+
+    Lädt den Bestand von der Live-Seite, ersetzt darin die aktuelle Woche
+    und schreibt das Ergebnis zurück — kostet nur 1 Rapla-Anfrage statt
+    einer vollen Quartalsgenerierung (~13 Anfragen).
+    """
+    rooms_meta = load_rooms()
+    print(f"Geladen: {len(rooms_meta)} Räume aus rooms.json")
+
+    existing = fetch_existing_data(source_url)
+    today = now_berlin().date()
+
+    if existing is None:
+        print("Kein Bestand ladbar — fülle stattdessen das komplette aktuelle Quartal.")
+        title, weeks_iter = current_quarter_title_and_weeks(today)
+        generate(weeks_iter, title, output_path)
+        return
+
+    title, all_weeks = existing
+    monday = today - timedelta(days=today.weekday())
+    kw = monday.isocalendar()[1]
+    print(f"Schnell-Refresh: nur KW{kw} ({monday})")
+
+    fresh_week = build_week_data(monday, rooms_meta)
+
+    monday_str = monday.isoformat()
+    for i, w in enumerate(all_weeks):
+        if w.get("monday") == monday_str:
+            all_weeks[i] = fresh_week
+            break
+    else:
+        all_weeks.append(fresh_week)
+        all_weeks.sort(key=lambda w: w["monday"])
+
+    html = HTML_TEMPLATE.format(
+        title=title,
+        generated=now_berlin().strftime("%d.%m.%Y %H:%M"),
+        data_json=json.dumps(all_weeks, ensure_ascii=False),
+        rooms_json=json.dumps(rooms_meta, ensure_ascii=False),
+    )
+
+    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html)
+
+    print(f"\nFertig (Schnell-Refresh): {output_path} ({len(html)} Bytes)")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Statische Freie-Räume-Seite generieren"
@@ -441,12 +541,24 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--quarter", help="Quartal im Format YYYY-QN, z.B. 2026-Q2")
     group.add_argument("--weeks", type=int, help="Anzahl Wochen ab --start")
+    group.add_argument(
+        "--refresh-week", action="store_true",
+        help="Nur aktuelle Woche aktualisieren (lädt Bestand von --source-url)",
+    )
     parser.add_argument("--start", help="Start-Montag (ISO). Nur mit --weeks.")
     parser.add_argument(
         "--output", default="docs/index.html",
         help="Ausgabedatei (Standard: docs/index.html)",
     )
+    parser.add_argument(
+        "--source-url", default=DEFAULT_SOURCE_URL,
+        help="Live-URL zum Nachladen des Bestands bei --refresh-week",
+    )
     args = parser.parse_args()
+
+    if args.refresh_week:
+        refresh_current_week(args.source_url, args.output)
+        return
 
     if args.quarter:
         try:

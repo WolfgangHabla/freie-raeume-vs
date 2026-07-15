@@ -2,13 +2,16 @@ name: Build & Deploy Freie Räume
 
 on:
   schedule:
-    # Alle 15 Min von 7-15 Uhr lokal (Europe/Berlin), Cron läuft in UTC.
-    # Stunden 5-13 UTC während CEST (Sommerzeit) = 7-15 Uhr lokal, letzter
-    # Lauf um 13:45 UTC = 15:45 lokal (leichter Überhang, siehe "zumindest").
-    # Achtung: bei CET (Winterzeit, UTC+1) verschiebt sich das auf
-    # 6-14 Uhr lokal — Cron-Zeiten selbst bleiben fix in UTC.
+    # Volle Quartals-Neugenerierung: 1x täglich, 04:00 UTC = 06:00 CEST /
+    # 05:00 CET, vor Vorlesungsbeginn. Holt alle ~13 Wochen frisch von Rapla.
+    - cron: '0 4 * * *'
+    # Schnell-Refresh: nur die aktuelle Woche, alle 15 Min von 7-15 Uhr
+    # lokal (Europe/Berlin). Stunden 5-13 UTC während CEST (Sommerzeit);
+    # bei CET (Winterzeit) verschiebt sich das auf 6-14 Uhr lokal, da
+    # Cron-Zeiten selbst fix in UTC bleiben. Kostet nur 1 statt ~13
+    # Rapla-Anfragen pro Lauf.
     - cron: '*/15 5-13 * * *'
-  workflow_dispatch:  # Manuell aus Actions-Tab triggerbar
+  workflow_dispatch:  # Manuell aus Actions-Tab triggerbar (immer voller Build)
   push:
     branches: [main]
     paths:
@@ -40,7 +43,23 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Determine build mode
+        id: mode
+        run: |
+          # Nur der 15-Min-Cron macht einen Schnell-Refresh (nur aktuelle
+          # Woche). Alles andere (täglicher Cron, manueller Trigger,
+          # Code-Push) macht einen vollen Quartals-Rebuild — sicherer
+          # Default, falls sich mal ein Trigger überschneidet.
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "*/15 5-13 * * *" ]; then
+            MODE=refresh
+          else
+            MODE=full
+          fi
+          echo "value=${MODE}" >> "$GITHUB_OUTPUT"
+          echo "Build mode: ${MODE}"
+
       - name: Compute current quarter (Europe/Berlin)
+        if: steps.mode.outputs.value == 'full'
         id: quarter
         run: |
           # Lokalzeit Europe/Berlin verwenden, nicht UTC — sonst springt
@@ -52,8 +71,13 @@ jobs:
           echo "value=${Y}-Q${Q}" >> "$GITHUB_OUTPUT"
           echo "Generating quarter: ${Y}-Q${Q}"
 
-      - name: Generate static page
+      - name: Generate static page (full quarter)
+        if: steps.mode.outputs.value == 'full'
         run: python generate_static.py --quarter ${{ steps.quarter.outputs.value }} --output docs/index.html
+
+      - name: Generate static page (refresh current week)
+        if: steps.mode.outputs.value == 'refresh'
+        run: python generate_static.py --refresh-week --output docs/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

@@ -42,6 +42,29 @@ werden, nur `RAPLA_BASE` in `app.py`.
 `app.py` (Konstante `RAPLA_BASE`) unabhängig von `rapla-counter/app.py`
 aktualisiert werden.
 
+## Aktualisierungs-Strategie (GitHub Actions)
+
+Zwei Cron-Trigger in `.github/workflows/build-and-deploy.yml`, um Rapla
+nicht unnötig oft komplett abzufragen:
+
+- **1× täglich (04:00 UTC):** voller Rebuild des kompletten Quartals
+  (`generate_static.py --quarter ...`), ~13 Rapla-Anfragen.
+- **Alle 15 Min, 7–15 Uhr lokal:** Schnell-Refresh nur der aktuellen Woche
+  (`generate_static.py --refresh-week`). Lädt dazu den Bestand von der
+  **live deployten Seite** selbst (`--source-url`, Standard: die GitHub-
+  Pages-URL), ersetzt darin nur die aktuelle Woche mit frischen Rapla-Daten
+  und schreibt das Ergebnis zurück — 1 Rapla-Anfrage statt ~13. Kein
+  zusätzliches Cache-File im Repo nötig.
+  Falls die Live-Seite noch nicht existiert oder nicht ladbar ist (z.B.
+  beim allerersten Deploy), fällt der Schnell-Refresh automatisch auf einen
+  vollen Quartals-Rebuild zurück (`fetch_existing_data()` liefert dann
+  `None`).
+
+Der Workflow erkennt anhand von `github.event.schedule`, welcher der beiden
+Cron-Trigger gefeuert hat, und wählt entsprechend `--quarter` oder
+`--refresh-week`. Manuelle Trigger (`workflow_dispatch`) und Code-Pushes
+lösen immer einen vollen Rebuild aus (sicherer Default).
+
 ## Raumextraktion
 
 Der bestehende Parser in `rapla-counter/app.py` extrahiert pro `week_block`
