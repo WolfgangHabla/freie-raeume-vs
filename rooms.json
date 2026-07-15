@@ -1,6 +1,13 @@
 {
   "rooms": [
     {
+      "name": "A 001 Konferenzraum",
+      "short_name": "A 001",
+      "building": "A",
+      "floor": 0,
+      "include": true
+    },
+    {
       "name": "B 002 Leibniz Hörsaal",
       "short_name": "B 002",
       "building": "B",
@@ -12,6 +19,13 @@
       "short_name": "B 003",
       "building": "B",
       "floor": 0,
+      "include": true
+    },
+    {
+      "name": "B 101 Hörsaal",
+      "short_name": "B 101",
+      "building": "B",
+      "floor": 1,
       "include": true
     },
     {
@@ -80,6 +94,13 @@
     {
       "name": "C -1.23 Gutenberg Tiefenhörsaal",
       "short_name": "C -1.23",
+      "building": "C",
+      "floor": 1,
+      "include": true
+    },
+    {
+      "name": "C 1.12 Dozentenaufenthaltsraum",
+      "short_name": "C 1.12",
       "building": "C",
       "floor": 1,
       "include": true
@@ -173,6 +194,13 @@
       "short_name": "C 2.30",
       "building": "C",
       "floor": 2,
+      "include": true
+    },
+    {
+      "name": "C 3.15 Kompetenz Center KI",
+      "short_name": "C 3.15",
+      "building": "C",
+      "floor": 3,
       "include": true
     },
     {
@@ -449,6 +477,6 @@
       "include": true
     }
   ],
-  "last_collected": "2026-05-05",
+  "last_collected": "2026-07-15",
   "sources_weeks": 12
 }

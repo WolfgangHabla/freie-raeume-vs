@@ -1,12 +1,17 @@
 # DHBW-VS Raumliste
 
-Automatisch erzeugt von `collect_rooms.py` am 2026-05-05.
-Quelle: 64 Räume aus Rapla.
+Automatisch erzeugt von `collect_rooms.py` am 2026-07-15.
+Quelle: 68 Räume aus Rapla.
+
+## Gebäude A
+
+- **A 001** — Konferenzraum
 
 ## Gebäude B
 
 - **B 002** — Leibniz Hörsaal
 - **B 003** — Zuse Hörsaal
+- **B 101** — Hörsaal
 - **B 102** — Hörsaal
 - **B 103** — Hörsaal
 - **B 201** — Hörsaal
@@ -20,6 +25,7 @@ Quelle: 64 Räume aus Rapla.
 
 - **C -1.21** — Schmalenbach Tiefenhörsaal
 - **C -1.23** — Gutenberg Tiefenhörsaal
+- **C 1.12** — Dozentenaufenthaltsraum
 - **C 1.20** — Hörsaal
 - **C 1.21** — Hörsaal
 - **C 1.22** — Hörsaal
@@ -33,6 +39,7 @@ Quelle: 64 Räume aus Rapla.
 - **C 2.24** — Hörsaal
 - **C 2.25** — Hörsaal
 - **C 2.30** — Hörsaal
+- **C 3.15** — Kompetenz Center KI
 - **C 3.20** — Hörsaal
 - **C 3.21** — Hörsaal
 - **C 3.22** — Hörsaal

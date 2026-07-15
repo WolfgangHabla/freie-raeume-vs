@@ -38,10 +38,14 @@ from datetime import date, timedelta
 import requests
 from bs4 import BeautifulSoup
 
+# "DHBW-VS Raumbelegung Parkplatz (Habla)" — eigener Rapla-Kalender des
+# Users, der zusätzlich zu regulären Kursbuchungen auch Ad-hoc-
+# Raumreservierungen (z.B. mündliche Prüfungen) zeigt. Löst den
+# ursprünglichen Kalender-Link komplett ab (Obermenge, gleiche HTML-Struktur).
 RAPLA_BASE = (
     "https://rapla.dhbw.de/rapla/calendar?"
     "key=3m0O8EVJ2EaIYRGKNLrg04l51NVqdHUdqmVlRsPBk79i5RvkbUkRU3mkHJcmcGYy"
-    "2iSBBS-IDTcajBP0hVZOvO4-EMZYgpSc7lj1FTS_4NLq5fb-ZVXqOA_7GxQZsYWjLmdX"
+    "qYreIn6_bLMo1qpnPgqgSfk07XiYwjsTRGeM9gtPv07q5fb-ZVXqOA_7GxQZsYWjLmdX"
     "fLQ4PL68OAjCUe1vG-3T23NxGXJBNLjWKQqDU1o"
     "&salt=-888929980"
 )

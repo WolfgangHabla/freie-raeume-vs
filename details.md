@@ -24,15 +24,23 @@ Kein Flask. Keine Live-Server. Nur CLI-Skripte und statische Ausgabe.
 ## Datenquelle
 
 Die DHBW nutzt **Rapla** als Stundenplansystem. Die Daten werden über eine
-öffentliche Kalender-URL abgerufen (gleicher Link wie `rapla-counter`):
+öffentliche Kalender-URL abgerufen:
 
 ```
 https://rapla.dhbw.de/rapla/calendar?key=...&salt=...&day=D&month=M&year=Y
 ```
 
+Seit 2026-07 verwendet diese App einen **eigenen** Rapla-Kalender-Link
+("DHBW-VS Raumbelegung Parkplatz (Habla)"), unabhängig vom Link in
+`rapla-counter`. Dieser Kalender zeigt zusätzlich zu regulären
+Kursbuchungen auch Ad-hoc-Raumreservierungen (z.B. mündliche Prüfungen),
+ist aber strukturell identisch (`table.week_table`, `week_block`-Zellen,
+`<span class="resource">`) — der Parser musste dafür nicht angepasst
+werden, nur `RAPLA_BASE` in `app.py`.
+
 **Wichtig:** Der `key=`-Parameter läuft halbjährlich ab und muss in
-`app.py` (Konstante `RAPLA_BASE`) parallel zu `rapla-counter/app.py`
-aktualisiert werden — siehe `../rapla-counter/TODO.md`.
+`app.py` (Konstante `RAPLA_BASE`) unabhängig von `rapla-counter/app.py`
+aktualisiert werden.
 
 ## Raumextraktion
 
