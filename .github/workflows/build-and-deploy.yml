@@ -2,11 +2,12 @@ name: Build & Deploy Freie Räume
 
 on:
   schedule:
-    # Alle 2h von 7-15 Uhr lokal (Europe/Berlin): 7,9,11,13,15 Uhr.
-    # Cron läuft in UTC, daher 5,7,9,11,13 UTC während CEST (Sommerzeit).
+    # Alle 15 Min von 7-15 Uhr lokal (Europe/Berlin), Cron läuft in UTC.
+    # Stunden 5-13 UTC während CEST (Sommerzeit) = 7-15 Uhr lokal, letzter
+    # Lauf um 13:45 UTC = 15:45 lokal (leichter Überhang, siehe "zumindest").
     # Achtung: bei CET (Winterzeit, UTC+1) verschiebt sich das auf
-    # 6,8,10,12,14 Uhr lokal — Cron-Zeiten selbst bleiben fix in UTC.
-    - cron: '0 5,7,9,11,13 * * *'
+    # 6-14 Uhr lokal — Cron-Zeiten selbst bleiben fix in UTC.
+    - cron: '*/15 5-13 * * *'
   workflow_dispatch:  # Manuell aus Actions-Tab triggerbar
   push:
     branches: [main]
