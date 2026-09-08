@@ -11,6 +11,13 @@ on:
     # Cron-Zeiten selbst fix in UTC bleiben. Kostet nur 1 statt ~13
     # Rapla-Anfragen pro Lauf.
     - cron: '*/15 5-13 * * *'
+    # Keep-Alive: 1x/Monat ein trivialer Commit, der nichts mit der
+    # Freie-Räume-Seite zu tun hat. GitHub deaktiviert geplante Workflows
+    # automatisch nach 60 Tagen ohne *Repository*-Aktivität (Commits/Pushes
+    # zählen, reine Workflow-Läufe nicht — genau das war 2026-09 der Grund
+    # für die Abschalt-Warnung). Dieser Lauf überspringt Rapla-Abfrage und
+    # Pages-Deploy komplett, siehe "Determine build mode" unten.
+    - cron: '0 5 1 * *'
   workflow_dispatch:  # Manuell aus Actions-Tab triggerbar (immer voller Build)
   push:
     branches: [main]
@@ -32,31 +39,53 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # nur dieser Job braucht Schreibzugriff, für den Keep-Alive-Commit
+      pages: write
+      id-token: write
+    outputs:
+      mode: ${{ steps.mode.outputs.value }}
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: pip
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
 
       - name: Determine build mode
         id: mode
         run: |
-          # Nur der 15-Min-Cron macht einen Schnell-Refresh (nur aktuelle
-          # Woche). Alles andere (täglicher Cron, manueller Trigger,
-          # Code-Push) macht einen vollen Quartals-Rebuild — sicherer
-          # Default, falls sich mal ein Trigger überschneidet.
-          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "*/15 5-13 * * *" ]; then
+          # Reihenfolge: Keep-Alive-Cron zuerst prüfen, dann 15-Min-Refresh,
+          # sonst voller Rebuild (täglicher Cron, manueller Trigger, Push).
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "0 5 1 * *" ]; then
+            MODE=keepalive
+          elif [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "*/15 5-13 * * *" ]; then
             MODE=refresh
           else
             MODE=full
           fi
           echo "value=${MODE}" >> "$GITHUB_OUTPUT"
           echo "Build mode: ${MODE}"
+
+      - name: Keep-alive commit
+        if: steps.mode.outputs.value == 'keepalive'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          echo "Letzter automatischer Keep-Alive-Commit: $(date -u +'%Y-%m-%d %H:%M UTC')" > .github/KEEPALIVE.md
+          echo "" >> .github/KEEPALIVE.md
+          echo "Verhindert, dass GitHub diesen Workflow nach 60 Tagen ohne" >> .github/KEEPALIVE.md
+          echo "Repository-Aktivität automatisch deaktiviert (reine" >> .github/KEEPALIVE.md
+          echo "Workflow-Läufe zählen dafür nicht als Aktivität)." >> .github/KEEPALIVE.md
+          git add .github/KEEPALIVE.md
+          git commit -m "Keep-alive: verhindert Auto-Disable des Workflows nach 60 Tagen"
+          git push
+
+      - uses: actions/setup-python@v5
+        if: steps.mode.outputs.value != 'keepalive'
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        if: steps.mode.outputs.value != 'keepalive'
+        run: pip install -r requirements.txt
 
       - name: Compute current quarter (Europe/Berlin)
         if: steps.mode.outputs.value == 'full'
@@ -80,12 +109,14 @@ jobs:
         run: python generate_static.py --refresh-week --output docs/index.html
 
       - name: Upload Pages artifact
+        if: steps.mode.outputs.value != 'keepalive'
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
 
   deploy:
     needs: build
+    if: needs.build.outputs.mode != 'keepalive'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

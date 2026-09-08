@@ -44,8 +44,7 @@ aktualisiert werden.
 
 ## Aktualisierungs-Strategie (GitHub Actions)
 
-Zwei Cron-Trigger in `.github/workflows/build-and-deploy.yml`, um Rapla
-nicht unnötig oft komplett abzufragen:
+Drei Cron-Trigger in `.github/workflows/build-and-deploy.yml`:
 
 - **1× täglich (04:00 UTC):** voller Rebuild des kompletten Quartals
   (`generate_static.py --quarter ...`), ~13 Rapla-Anfragen.
@@ -60,10 +59,24 @@ nicht unnötig oft komplett abzufragen:
   vollen Quartals-Rebuild zurück (`fetch_existing_data()` liefert dann
   `None`).
 
-Der Workflow erkennt anhand von `github.event.schedule`, welcher der beiden
-Cron-Trigger gefeuert hat, und wählt entsprechend `--quarter` oder
-`--refresh-week`. Manuelle Trigger (`workflow_dispatch`) und Code-Pushes
-lösen immer einen vollen Rebuild aus (sicherer Default).
+- **1× monatlich (05:00 UTC, 1. des Monats):** Keep-Alive-Commit. GitHub
+  deaktiviert geplante Workflows automatisch nach 60 Tagen ohne
+  *Repository*-Aktivität (Commits/Pushes) — reine Workflow-Läufe zählen
+  dafür **nicht**, weil dieser Workflow nie ins Repo zurückcommittet
+  (Deploy läuft über Pages-Artifact). Das führte 2026-09 zu einer
+  Abschalt-Warnung per E-Mail nach 55 Tagen ohne Commit. Der Keep-Alive-Lauf
+  aktualisiert nur einen Zeitstempel in `.github/KEEPALIVE.md` und
+  committet/pusht das mit dem `github-actions[bot]`-Identity — überspringt
+  Rapla-Abfrage, Python-Setup und Pages-Deploy komplett.
+
+Der Workflow erkennt anhand von `github.event.schedule`, welcher der drei
+Cron-Trigger gefeuert hat, und wählt entsprechend `full` (`--quarter`),
+`refresh` (`--refresh-week`) oder `keepalive`. Manuelle Trigger
+(`workflow_dispatch`) und Code-Pushes lösen immer einen vollen Rebuild aus
+(sicherer Default). Nur der `build`-Job hat `contents: write` (für den
+Keep-Alive-Commit) — der `deploy`-Job braucht nur `pages`/`id-token` und
+läuft bei `keepalive` gar nicht erst (`if: needs.build.outputs.mode !=
+'keepalive'`).
 
 ## Raumextraktion
 
